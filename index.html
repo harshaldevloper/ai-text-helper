@@ -100,11 +100,51 @@
             padding: 1rem 2rem; border-radius: 50px;
             text-decoration: none; font-weight: 700;
             transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+            border: none; cursor: pointer; font-size: 0.9rem;
         }
         .tool-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 15px 50px rgba(255,255,255,0.4);
         }
+        
+        /* Tool Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 2rem; max-width: 800px; width: 90%;
+            max-height: 80vh; overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+        @keyframes modalSlide { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .modal-header h2 { font-size: 1.8rem; }
+        .close-btn { background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
+        .tool-interface { margin-top: 1rem; }
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%; padding: 1rem; border-radius: 10px; border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.1); color: #fff; font-size: 1rem;
+        }
+        .input-group textarea { min-height: 150px; resize: vertical; }
+        .result-box {
+            background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1.5rem;
+            margin-top: 1.5rem; white-space: pre-wrap; font-family: monospace;
+        }
+        .loading { opacity: 0.7; pointer-events: none; }
+        .spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         footer { text-align: center; padding: 3rem 0; opacity: 0.9; margin-top: 3rem; }
         footer a { color: #fff; text-decoration: none; margin: 0 0.5rem; opacity: 0.8; }
@@ -144,29 +184,29 @@
             <div class="tool-card">
                 <span class="tool-icon">📊</span>
                 <h3>AI Text Analyzer</h3>
-                <p>Analyze text for sentiment, key topics, readability score, and actionable insights using advanced NLP. Perfect for content creators and marketers.</p>
-                <a href="#" class="tool-btn" onclick="alert('Tool interface loading...')">Launch Tool →</a>
+                <p>Analyze text for sentiment, key topics, readability score, and actionable insights using advanced NLP.</p>
+                <button class="tool-btn" onclick="openTool('text-analyzer')">Launch Tool →</button>
             </div>
             
             <div class="tool-card">
                 <span class="tool-icon">✍️</span>
                 <h3>Content Generator</h3>
-                <p>Generate viral social media posts, blog outlines, email sequences, and marketing copy in seconds. Supports Twitter, LinkedIn, Instagram, and blogs.</p>
-                <a href="#" class="tool-btn" onclick="alert('Tool interface loading...')">Launch Tool →</a>
+                <p>Generate viral social media posts, blog outlines, email sequences, and marketing copy in seconds.</p>
+                <button class="tool-btn" onclick="openTool('content-generator')">Launch Tool →</button>
             </div>
             
             <div class="tool-card">
                 <span class="tool-icon">🧠</span>
                 <h3>Prompt Optimizer</h3>
-                <p>Optimize your AI prompts for better results. Get suggestions, variations, and improvements instantly for ChatGPT, Claude, and Gemini.</p>
-                <a href="#" class="tool-btn" onclick="alert('Tool interface loading...')">Launch Tool →</a>
+                <p>Optimize your AI prompts for better results. Get suggestions, variations, and improvements.</p>
+                <button class="tool-btn" onclick="openTool('prompt-optimizer')">Launch Tool →</button>
             </div>
             
             <div class="tool-card">
                 <span class="tool-icon">💻</span>
                 <h3>Code Assistant</h3>
-                <p>Get code explanations, refactoring suggestions, and documentation from any code snippet. Supports JavaScript, Python, React, and more.</p>
-                <a href="#" class="tool-btn" onclick="alert('Tool interface loading...')">Launch Tool →</a>
+                <p>Get code explanations, refactoring suggestions, and documentation from any code snippet.</p>
+                <button class="tool-btn" onclick="openTool('code-assistant')">Launch Tool →</button>
             </div>
         </div>
         
@@ -182,5 +222,223 @@
             <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">© 2026 AIVANTAGE. All rights reserved.</p>
         </footer>
     </div>
+
+    <!-- Tool Modal -->
+    <div id="toolModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Tool Name</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="toolInterface" class="tool-interface"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        const tools = {
+            'text-analyzer': {
+                title: '📊 AI Text Analyzer',
+                render: () => `
+                    <div class="input-group">
+                        <label>Enter text to analyze:</label>
+                        <textarea id="textInput" placeholder="Paste your text here..."></textarea>
+                    </div>
+                    <button class="tool-btn" onclick="analyzeText()">Analyze Text</button>
+                    <div id="textResult" class="result-box" style="display:none;"></div>
+                `
+            },
+            'content-generator': {
+                title: '✍️ Content Generator',
+                render: () => `
+                    <div class="input-group">
+                        <label>Topic:</label>
+                        <input type="text" id="topicInput" placeholder="e.g., AI productivity tips">
+                    </div>
+                    <div class="input-group">
+                        <label>Platform:</label>
+                        <select id="platformSelect">
+                            <option value="twitter">Twitter Thread</option>
+                            <option value="linkedin">LinkedIn Post</option>
+                            <option value="instagram">Instagram Caption</option>
+                            <option value="blog">Blog Outline</option>
+                        </select>
+                    </div>
+                    <button class="tool-btn" onclick="generateContent()">Generate Content</button>
+                    <div id="contentResult" class="result-box" style="display:none;"></div>
+                `
+            },
+            'prompt-optimizer': {
+                title: '🧠 Prompt Optimizer',
+                render: () => `
+                    <div class="input-group">
+                        <label>Your prompt:</label>
+                        <textarea id="promptInput" placeholder="Enter your AI prompt..."></textarea>
+                    </div>
+                    <button class="tool-btn" onclick="optimizePrompt()">Optimize Prompt</button>
+                    <div id="promptResult" class="result-box" style="display:none;"></div>
+                `
+            },
+            'code-assistant': {
+                title: '💻 Code Assistant',
+                render: () => `
+                    <div class="input-group">
+                        <label>Paste your code:</label>
+                        <textarea id="codeInput" placeholder="Paste code here..." style="min-height:200px;font-family:monospace;"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Action:</label>
+                        <select id="actionSelect">
+                            <option value="explain">Explain Code</option>
+                            <option value="refactor">Refactor Suggestions</option>
+                            <option value="document">Generate Documentation</option>
+                            <option value="debug">Debug Checklist</option>
+                        </select>
+                    </div>
+                    <button class="tool-btn" onclick="analyzeCode()">Analyze Code</button>
+                    <div id="codeResult" class="result-box" style="display:none;"></div>
+                `
+            }
+        };
+
+        function openTool(toolId) {
+            const tool = tools[toolId];
+            document.getElementById('modalTitle').textContent = tool.title;
+            document.getElementById('toolInterface').innerHTML = tool.render();
+            document.getElementById('toolModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('toolModal').classList.remove('active');
+        }
+
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            if (!text) return alert('Please enter some text');
+            
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+            
+            try {
+                const res = await fetch(`${API_BASE}/text-analyzer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('textResult').style.display = 'block';
+                    document.getElementById('textResult').textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            
+            btn.classList.remove('loading');
+            btn.innerHTML = 'Analyze Text';
+        }
+
+        async function generateContent() {
+            const topic = document.getElementById('topicInput').value;
+            const platform = document.getElementById('platformSelect').value;
+            if (!topic) return alert('Please enter a topic');
+            
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Generating...';
+            
+            try {
+                const res = await fetch(`${API_BASE}/content-generator`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, platform })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('contentResult').style.display = 'block';
+                    document.getElementById('contentResult').textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            
+            btn.classList.remove('loading');
+            btn.innerHTML = 'Generate Content';
+        }
+
+        async function optimizePrompt() {
+            const prompt = document.getElementById('promptInput').value;
+            if (!prompt) return alert('Please enter a prompt');
+            
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Optimizing...';
+            
+            try {
+                const res = await fetch(`${API_BASE}/prompt-optimizer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('promptResult').style.display = 'block';
+                    document.getElementById('promptResult').textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            
+            btn.classList.remove('loading');
+            btn.innerHTML = 'Optimize Prompt';
+        }
+
+        async function analyzeCode() {
+            const code = document.getElementById('codeInput').value;
+            const action = document.getElementById('actionSelect').value;
+            if (!code) return alert('Please enter some code');
+            
+            const btn = event.target;
+            btn.classList.add('loading');
+            btn.innerHTML = '<span class="spinner"></span> Analyzing...';
+            
+            try {
+                const res = await fetch(`${API_BASE}/code-assistant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, action })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    document.getElementById('codeResult').style.display = 'block';
+                    document.getElementById('codeResult').textContent = JSON.stringify(data.data, null, 2);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+            
+            btn.classList.remove('loading');
+            btn.innerHTML = 'Analyze Code';
+        }
+
+        // Close modal on outside click
+        document.getElementById('toolModal').addEventListener('click', (e) => {
+            if (e.target.id === 'toolModal') closeModal();
+        });
+    </script>
 </body>
 </html>
