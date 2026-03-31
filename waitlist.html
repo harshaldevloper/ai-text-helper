@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workflow Automator - Zapier for AI Tools | AIVANTAGE</title>
+    <meta name="description" content="Build automated AI workflows in minutes. Connect ChatGPT, ElevenLabs, Jasper & 50+ AI tools. No code required. Join the waitlist!">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f0f23;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+        }
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out;
+        }
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -5s;
+        }
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 30px) scale(0.9); }
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            animation: fadeInUp 1s ease-out;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 50%, #f5576c 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s ease infinite;
+            margin-bottom: 1rem;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .tagline {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        /* Features Grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out;
+            animation-fill-mode: both;
+        }
+        .feature-card:nth-child(1) { animation-delay: 0.2s; }
+        .feature-card:nth-child(2) { animation-delay: 0.4s; }
+        .feature-card:nth-child(3) { animation-delay: 0.6s; }
+        .feature-card:nth-child(4) { animation-delay: 0.8s; }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .feature-card p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+        }
+        /* Use Cases */
+        .use-cases {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px;
+            padding: 3rem;
+            margin: 4rem 0;
+        }
+        .use-cases h3 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .use-case {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .use-case:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateX(10px);
+        }
+        .use-case h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .use-case p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+        /* Waitlist Form */
+        .waitlist-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            margin: 4rem 0;
+            animation: fadeInUp 1s ease-out;
+            animation-delay: 1s;
+            animation-fill-mode: both;
+        }
+        .waitlist-section h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .waitlist-section p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .form-group input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+        }
+        .form-group input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .form-group button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 1.2rem 2.5rem;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .form-group button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .social-proof {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .social-proof p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        .counter {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 4rem;
+        }
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #764ba2;
+        }
+        /* Success Message */
+        .success-message {
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .tagline { font-size: 1.1rem; }
+            .features { grid-template-columns: 1fr; }
+            .use-cases { padding: 2rem; }
+            .form-group { flex-direction: column; }
+            .form-group input, .form-group button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Hero -->
+        <div class="hero">
+            <div class="logo">🤖</div>
+            <h1>AI Workflow Automator</h1>
+            <p class="tagline">
+                Connect ChatGPT, ElevenLabs, Jasper & 50+ AI tools into automated workflows. 
+                No code required. Build in minutes, scale infinitely.
+            </p>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>No Code Required</h3>
+                <p>Drag-and-drop visual builder anyone can use</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>50+ AI Integrations</h3>
+                <p>All your favorite AI tools in one place</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Analytics</h3>
+                <p>Track workflow performance & ROI</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Free to Start</h3>
+                <p>Free tier with 100 runs/month</p>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="use-cases">
+            <h3>🚀 What You Can Build</h3>
+            <div class="use-case">
+                <h4>📝 Content Repurposing Engine</h4>
+                <p>YouTube video → AI transcript → Blog post → 10 social posts → Auto-schedule everywhere</p>
+            </div>
+            <div class="use-case">
+                <h4>💼 Lead Processing Automation</h4>
+                <p>New email lead → AI extracts info → Add to CRM → Send personalized reply → Create follow-up task</p>
+            </div>
+            <div class="use-case">
+                <h4>🎨 Creative Production Line</h4>
+                <p>Blog topic → AI outline → AI draft → AI images → Auto-publish to WordPress</p>
+            </div>
+            <div class="use-case">
+                <h4>📞 Smart Customer Support</h4>
+                <p>Support ticket → AI analyzes sentiment → AI drafts response → Send for approval → Auto-send</p>
+            </div>
+            <div class="use-case">
+                <h4>📈 Social Media Growth</h4>
+                <p>One idea → AI generates 30 posts → AI creates images → Schedule across all platforms</p>
+            </div>
+        </div>
+
+        <!-- Waitlist Form -->
+        <div class="waitlist-section">
+            <div id="waitlistForm">
+                <h3>🎯 Join the Waitlist</h3>
+                <p>Be first to get early access + <strong>50% off lifetime</strong></p>
+                <form onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                        <button type="submit">Join Waitlist →</button>
+                    </div>
+                </form>
+                <div class="social-proof">
+                    <p>Join <span class="counter" id="counter">0</span> creators waiting for launch</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">🔒 No spam. Unsubscribe anytime.</p>
+                </div>
+            </div>
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">🎉</div>
+                <h3>You're on the list!</h3>
+                <p>We'll email you when we launch. Get ready to automate everything!</p>
+                <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-top: 1rem;">
+                    🚀 Share this page to move up the list!
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Built with ❤️ by AIVANTAGE</p>
+            <p style="margin-top: 1rem;">
+                <a href="https://dev.to/aiavantage">Dev.to</a> • 
+                <a href="https://bsky.app/profile/aivantage.bsky.social">Bluesky</a> • 
+                <a href="https://aivantage-starter.vercel.app/">Website</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">
+                Coming Q2 2026 • Early access for waitlist members
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Animated counter
+        let count = 0;
+        const target = 342; // Starting number (will grow!)
+        const counterEl = document.getElementById('counter');
+        
+        const interval = setInterval(() => {
+            if (count >= target) {
+                clearInterval(interval);
+            } else {
+                count += Math.ceil(Math.random() * 15);
+                if (count > target) count = target;
+                counterEl.textContent = count.toLocaleString();
+            }
+        }, 50);
+
+        // Form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            // Store locally (replace with actual backend)
+            const waitlist = JSON.parse(localStorage.getItem('aivantage_waitlist') || '[]');
+            waitlist.push({ 
+                email, 
+                date: new Date().toISOString(),
+                source: 'waitlist-page'
+            });
+            localStorage.setItem('aivantage_waitlist', JSON.stringify(waitlist));
+            
+            // Show success
+            document.getElementById('waitlistForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Track in console (replace with analytics)
+            console.log('🎯 New waitlist signup:', email);
+            
+            // Optional: Send to Google Sheets, Airtable, or email service
+            // fetch('YOUR_WEBHOOK_URL', {
+            //     method: 'POST',
+            //     body: JSON.stringify({ email })
+            // });
+        }
+
+        // Add hover effects to use cases
+        document.querySelectorAll('.use-case').forEach((useCase, index) => {
+            useCase.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
