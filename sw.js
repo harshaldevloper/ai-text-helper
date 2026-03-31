@@ -1,6 +1,15 @@
-self.options = {
- "domain": "3nbf4.com",
- "zoneId": 10792142
-}
-self.lary = ""
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+// Service Worker - AIVANTAGE Tools
+// No ad code - clean for Paddle approval
+
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
+});
+
+self.addEventListener('fetch', (event) => {
+    // Standard fetch handling - no ad injection
+    event.respondWith(fetch(event.request));
+});
